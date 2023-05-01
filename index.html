@@ -3,18 +3,12 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/style.css">
 <script src="./js/bootstrap.min.js"></script>
 <title>Firebase:v9:Chatアプリ</title>
 </head>
-<body>
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item navbar navbar-expand-lg navbar-light bg-light" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
+<body style="display: none;">
+  <h1 class="chat-app-ttl">chat-APP</h1>
 
 <!-- コンテンツ表示画面 -->
 
@@ -27,10 +21,13 @@
         <div class=".mr-5">
           <button id="send" class="btn btn-primary">送信</button>
           <!-- <button id="delete" class="btn btn-primary">削除</button> -->
-          <button id="history" class="btn btn-primary">過去の履歴削除</button>
+          <button id="history" class="btn btn-info">過去の履歴削除</button>
         </div>
     </div>
-    <div id="output" style="overflow: auto; height:300px; border: 1px solid;" ></div>
+    <!-- <div id="output" style="overflow: auto; height:300px; border: 1px solid;" ></div> -->
+    <!-- HTML -->
+<div id="output" style="overflow-y: scroll; height: 300px; border: 1px solid;"></div>
+
 </div>
 <!--/ コンテンツ表示画面 -->
 
@@ -67,6 +64,9 @@
   const db  = getDatabase(app);
   const dbRef = ref(db, "chat");
 
+
+  $("body").fadeIn(2000); //2秒後に表示
+
   $("#send").on("click" , function(){
     send();
   });
@@ -90,30 +90,48 @@
     $("#output").empty(); //過去のメッセージを削除
   });
 
-  //関数の書き方
-  function send(){
-    const msg = {
-        // uname,textのIDからテキストの値をとってくる
-        uname : $("#uname").val(),
-        text : $("#text").val()
-        };
-        console.log(msg);
-        const newPostaRef = push(dbRef); // ユニークキーの発行
-        set(newPostaRef, msg); //ユニークキーとメッセージを送っている
-        $("#output").scrollTop($("#output")[0].scrollHeight);
-        $("#text").val(""); // 送信後、テキストエリアを空にする
-  }
+  // //関数の書き方
+  // function send(){
+  //   const msg = {
+  //       // uname,textのIDからテキストの値をとってくる
+  //       uname : $("#uname").val(),
+  //       text : $("#text").val()
+  //       };
+  //       console.log(msg);
+  //       const newPostaRef = push(dbRef); // ユニークキーの発行
+  //       set(newPostaRef, msg); //ユニークキーとメッセージを送っている
+  //       $("#output").scrollTop($("#output")[0].scrollHeight);
+  //       $("#text").val(""); // 送信後、テキストエリアを空にする
+  // }
   
-  //最初にデータ取得&
-  onChildAdded(dbRef, function(data){
-    const msg = data.val(); //Objectデータの取得
-    const key = data.key; //ユニークキー
-    // console.log(key);
-    const h = '<p>'+ msg.uname+'<br>'+msg.text+'</p>';
+  // //最初にデータ取得&
+  // onChildAdded(dbRef, function(data){
+  //   const msg = data.val(); //Objectデータの取得
+  //   const key = data.key; //ユニークキー
+  //   // console.log(key);
+  //   const h = '<p>'+ msg.uname+'<br>'+msg.text+'</p>';
+  //   $("#output").append(h);
+  //   $("#output").scrollTop($("#output")[0].scrollHeight);
+  // });
+
+  function send() {
+    const msg = {
+      uname: $("#uname").val(),
+      text: $("#text").val()
+    };
+    const newPostaRef = push(dbRef);
+    set(newPostaRef, msg);
+    $("#text").val("");
+  }
+
+  onChildAdded(dbRef, function(data) {
+    const msg = data.val();
+    const key = data.key;
+    const h = '<div class="message"><p class="name"><img src="./img/icon.jpg">' + msg.uname + '</p><p class="text">' + msg.text + '</p></div>';
     $("#output").append(h);
     $("#output").scrollTop($("#output")[0].scrollHeight);
   });
-</script>
 
+</script>
 </body>
 </html>
