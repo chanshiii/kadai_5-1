@@ -122,15 +122,24 @@
     const newPostaRef = push(dbRef);
     set(newPostaRef, msg);
     $("#text").val("");
+
+  //   // 削除する
+  const messageKey = newPostaRef.key; // ユニークキーを取得する
+  $("#delete").on("click", function() {
+    const messageRef = dbRef.child(messageKey);
+    messageRef.remove(dbRef);
+  });
   }
 
   onChildAdded(dbRef, function(data) {
     const msg = data.val();
     const key = data.key;
-    const h = '<div class="message"><p class="name"><img src="./img/icon.jpg">' + msg.uname + '</p><p class="text">' + msg.text + '</p></div>';
+    const del = remove(dbRef);
+    const h = '<div class="message"><p class="name"><img src="./img/icon.jpg">' + msg.uname + '</p><p class="text">' + msg.text + '</p>'+'<button id="delete" class="btn btn-primary">'+del.delete+'</button></div>';
     $("#output").append(h);
     $("#output").scrollTop($("#output")[0].scrollHeight);
   });
+
 
 </script>
 </body>
